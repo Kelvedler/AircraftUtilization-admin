@@ -14,6 +14,4 @@ RUN go build ./cmd/db/create_admin.go
 
 RUN go build ./cmd/app/admin.go
 
-EXPOSE 8000
-
 ENTRYPOINT ./docker-entrypoint.sh
