@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  potgres:
+  postgres:
     image: postgres:15.4-alpine3.18
     environment:
       - POSTGRES_DB=local_db
