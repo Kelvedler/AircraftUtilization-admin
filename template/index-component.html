@@ -1,0 +1,45 @@
+{{block "sign-in-form" .}}
+  <div
+    id="sign-in-form"
+    class="flex flex-col w-96 px-4 py-6 mt-16 rounded gap-y-2 bg-blue border-2 border-gray-dark"
+  >
+    <script src="/static/common.js"></script>
+    <div class="text-white text-center text-lg">Name</div>
+    <input
+      id="name"
+      name="name"
+      x-model="name"
+      class=" bg-gray-light rounded-md border-2 border-gray focus:border-white focus:outline-none px-3 py-2"
+      maxlength="30"
+    />
+    <div class="text-white text-center text-lg">Password</div>
+    <input
+      id="password"
+      name="password"
+      x-model="password"
+      class="bg-gray-light rounded-md border-2 border-gray focus:border-white"
+      type="password"
+      maxlength="20"
+    />
+    <div class="h-9 pl-4 text-lg text-red">{{.InputErr}}</div>
+    <div class="flex justify-center">
+      <button
+        hx-ext="json-enc"
+        hx-post="/api/v1/sign-in"
+        hx-on="htmx:beforeRequest: colorBlink(this, 25, 'bg-gray-dark', 'bg-gray-light')"
+        hx-target="#sign-in-form"
+        hx-swap="outerHTML"
+        hx-include="#name, #password"
+        class="btn-dark bg-gray-dark rounded-md py-2 px-6"
+      >
+        Sign-in
+      </button>
+    </div>
+    {{if .InputErr}}
+      <script type="text/javascript">
+        colorBlink(document.getElementById("name"), 3000, "border-gray", "border-red");
+        colorBlink(document.getElementById("password"), 3000, "border-gray", "border-red");
+      </script>
+    {{end}}
+  </div>
+{{end}}

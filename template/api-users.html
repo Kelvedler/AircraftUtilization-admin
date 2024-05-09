@@ -1,0 +1,11 @@
+{{template "base" .}}
+{{define "title"}}Api Users{{end}}
+{{define "content"}}
+  <div class="flex justify-center">
+    <div class="flex flex-col rounded mt-16 p-4 bg-blue border-2 border-gray-dark">
+      <script src="/static/common.js"></script>
+      {{template "api-users-list" .}}
+      {{template "api-users-create-form" .}}
+    </div>
+  </div>
+{{end}}

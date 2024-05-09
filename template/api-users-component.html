@@ -1,0 +1,136 @@
+{{block "api-users-list" .}}
+  <div id="api-users-list" class="bg-gray rounded" current-page={{.Page}}>
+    <div class="grid grid-cols-5 bg-gray-dark p-1 rounded gap-0.5">
+      <div class="bg-gray col-span-3 px-2">Name</div>
+      <div class="bg-gray px-2">Api Usage</div>
+      <div class="bg-gray px-2">Active</div>
+      {{range .ApiUsers}}
+        <div class="bg-gray-light col-span-3 px-2 min-h-max h-6">{{.Name}}</div>
+        <div class="bg-gray-light px-2">{{if .Name}}{{.Uses}}{{else}}{{end}}</div>
+        <div class="bg-gray-light px-2">
+          {{if .Name}}
+            {{if .Active}}yes{{else}}no{{end}}
+          {{else}}
+          {{end}}
+        </div>
+      {{end}}
+    </div>
+    <div class="flex justify-between p-1">
+      <div class="px-4 py-2">Page: {{.Page}}</div>
+      <div class="flex">
+        <button
+          {{if .PreviousPage}}
+            hx-on="htmx:beforeRequest: colorBlink(this, 25, 'bg-gray-dark', 'bg-gray-light')"
+            hx-get="{{.PreviousPage}}"
+            hx-target="#api-users-list"
+            hx-swap="outerHTML"
+          {{else}}
+            disabled
+          {{end}}
+          class="btn-dark bg-gray-dark rounded-l px-4 py-1"
+        >
+          Previous
+        </button>
+        <button
+          {{if .NextPage}}
+            hx-on="htmx:beforeRequest: colorBlink(this, 25, 'bg-gray-dark', 'bg-gray-light')"
+            hx-get="{{.NextPage}}"
+            hx-target="#api-users-list"
+            hx-swap="outerHTML"
+          {{else}}
+            disabled
+          {{end}}
+          class="btn-dark bg-gray-dark rounded-r px-4 py-1"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+{{end}}
+
+{{block "api-users-create-form" .}}
+  <div
+    x-data="{ createdState: {{.CreatedState}} }"
+    id="api-users-create-form"
+    class="flex justify-center rounded py-4 mt-2 border-2 border-gray-dark"
+  >
+    <div x-show="!createdState" class="grow">
+      <div class="flex grow mx-2 rounded">
+        <div class="
+          text-lg
+          p-1
+          bg-gray
+          rounded-y
+          rounded-l
+          border-y-2
+          border-l-2
+          border-gray-dark
+          ">Name</div>
+        <input
+          id="name"
+          name="name"
+          maxlength="30"
+          class="
+            px-3
+            rounded-r
+            rounded-y
+            bg-gray-light
+            border-y-2
+            border-r-2
+            border-gray-dark
+            focus:border-white
+            grow focus:outline-none
+          "
+        />
+        </div>
+      <div class="h-8 pl-4 text-lg text-red">
+        {{.InputErr}}
+      </div>
+      <div class="flex justify-center">
+        <button
+          hx-ext="json-enc"
+          hx-post="/api/v1/api-users"
+          hx-headers='{"_xsrf": "{{ .PostXsrf }}"}'
+          hx-on="htmx:beforeRequest: colorBlink(this, 25, 'bg-gray-dark', 'bg-gray-light')"
+          hx-target="#api-users-create-form"
+          hx-swap="outerHTML"
+          hx-include="#name"
+          class="btn-dark bg-gray-dark rounded-md px-4 py-2"
+        >
+          Create
+        </button>
+      </div>
+    </div>
+    <div
+      x-show="createdState"
+      class="flex flex-col gap-2 grow"
+    >
+      <div class="flex flex-col bg-gray-light rounded">
+        <div>Name: {{.Name}}</div>
+        <div>Key: {{.Key}}</div>
+      </div>
+      <div class="h-8 pl-4 text-lg text-red">
+        Save key value, you will not be able to see it again.
+      </div>
+      <div class="flex justify-center">
+        <button
+          @click="createdState = false"
+          hx-get="/api/v1/api-users/"
+          hx-on="htmx:beforeRequest: colorBlink(this, 25, 'bg-gray-dark', 'bg-gray-light')"
+          hx-on:htmx:config-request="event.detail.parameters.page=document.getElementById('api-users-list').getAttribute('current-page')"
+          hx-target="#api-users-list"
+          hx-swap="outerHTML"
+          class="btn-dark bg-gray-dark rounded-md px-4 py-2 shrink"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+    {{if .InputErr}}
+      <script type="text/javascript">
+        colorBlink(document.getElementById("name"), 3000, "border-gray-dark", "border-red");
+      </script>
+    {{end}}
+  </div>
+{{end}}

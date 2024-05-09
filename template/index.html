@@ -1,0 +1,10 @@
+{{template "base" .}}
+{{define "title"}}Aircraft Ulilization: Admin{{end}}
+{{define "content"}}
+  <div
+    x-data="{name: '', password: ''}"
+    class="flex justify-center"
+  >
+    {{template "sign-in-form" .}}
+  </div>
+{{end}}

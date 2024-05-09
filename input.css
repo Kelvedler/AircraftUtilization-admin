@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+
+.btn-dark {
+  @apply
+    text-white
+    text-lg
+    border-2
+    border-gray-dark
+    hover:border-white
+    disabled:border-gray-dark
+    disabled:bg-gray;
+}
+
+@tailwind utilities;
