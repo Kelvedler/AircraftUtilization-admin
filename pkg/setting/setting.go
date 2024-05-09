@@ -12,6 +12,7 @@ type AppSetting struct {
 	Argon2        Argon2
 	ApiKey        ApiKey
 	SecretKey     string
+	Port          uint16
 	LogLevel      slog.Level
 	AdminPassword string
 	DatabaseUrl   string
@@ -68,6 +69,15 @@ func setSecretKey(logger *slog.Logger) {
 	secretKey := os.Getenv(envKey)
 	ensureValueExists(envKey, secretKey, logger)
 	Setting.SecretKey = secretKey
+}
+
+func setPort(logger *slog.Logger) {
+	port, err := strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		logger.Error("Could not get 'PORT'")
+		os.Exit(1)
+	}
+	Setting.Port = uint16(port)
 }
 
 func setLogLevel(logger *slog.Logger) {
@@ -129,6 +139,7 @@ func InitSetting() {
 	).With(slog.String("process", "main"))
 
 	setSecretKey(logger)
+	setPort(logger)
 	setLogLevel(logger)
 	setDatabaseUrl(logger)
 	setJwt(logger)

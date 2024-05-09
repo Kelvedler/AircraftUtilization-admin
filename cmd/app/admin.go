@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/Kelvedler/AircraftUtilization-admin/pkg/common"
@@ -18,5 +19,5 @@ func main() {
 	sanitize := common.NewSanitizer()
 	dbpool := db.NewConnectionPool(ctx, mainLogger)
 	router := view.BaseRouter(dbpool, sanitize, validate, mainLogger)
-	http.ListenAndServe(":8000", router)
+	http.ListenAndServe(fmt.Sprintf(":%d", setting.Setting.Port), router)
 }
