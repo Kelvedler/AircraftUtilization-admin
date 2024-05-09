@@ -2,8 +2,8 @@ name: Deploy using infra repository
 
 on:
   push:
-  branches:
-    - main
+    branches:
+      - main
 
 jobs:
   deploy:
