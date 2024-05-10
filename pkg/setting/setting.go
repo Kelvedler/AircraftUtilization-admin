@@ -28,7 +28,7 @@ type Argon2 struct {
 }
 
 type ApiKey struct {
-	Length uint8
+	SecretLength uint8
 }
 
 type Jwt struct {
@@ -54,7 +54,7 @@ func setArgon2() {
 }
 
 func setApiKey() {
-	Setting.ApiKey = ApiKey{Length: 32}
+	Setting.ApiKey = ApiKey{SecretLength: 32}
 }
 
 func ensureValueExists(key, value string, logger *slog.Logger) {

@@ -17,11 +17,11 @@ func generateRandomBytes(n uint8) ([]byte, error) {
 	return b, nil
 }
 
-func GenerateUrlSafeString() (string, error) {
-	b, err := generateRandomBytes(setting.Setting.ApiKey.Length)
+func GenerateUrlSafeSecret() (string, error) {
+	b, err := generateRandomBytes(setting.Setting.ApiKey.SecretLength)
 	if err != nil {
 		return "", err
 	}
-	encodedStr := base64.URLEncoding.EncodeToString(b)
+	encodedStr := base64.RawURLEncoding.EncodeToString(b)
 	return encodedStr, nil
 }

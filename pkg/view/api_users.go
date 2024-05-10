@@ -1,6 +1,7 @@
 package view
 
 import (
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -58,6 +59,11 @@ func sanitizeApiUser(rc *middleware.RequestContext, apiUser *db.ApiUser) {
 
 func apiUsersApiUrl(page uint8) string {
 	return fmt.Sprintf("/api/v1/api-users/?page=%d", page)
+}
+
+func createKey(subject, encodedSecret string) string {
+	keyPrefix := base64.RawURLEncoding.EncodeToString([]byte(subject))
+	return fmt.Sprintf("%s.%s", keyPrefix, encodedSecret)
 }
 
 func apiUsers(
@@ -125,19 +131,19 @@ func apiUsersCreateApi(
 		return
 	}
 
-	rawKey, err := crypto.GenerateUrlSafeString()
+	rawSecret, err := crypto.GenerateUrlSafeSecret()
 	if err != nil {
 		rc.Logger.Error(err.Error())
 		common.ErrorResp(w)
 		return
 	}
-	hashedKey, err := crypto.HashKey([]byte(rawKey))
+	hashedSecret, err := crypto.HashKey([]byte(rawSecret))
 	if err != nil {
 		rc.Logger.Error(err.Error())
 		common.ErrorResp(w)
 		return
 	}
-	apiUser.Key = hashedKey
+	apiUser.Secret = hashedSecret
 
 	errs := db.PerformBatch(r.Context(), rc.DbPool, []db.BatchSet{apiUser.Create})
 	apiUserErr := errs[0]
@@ -157,7 +163,7 @@ func apiUsersCreateApi(
 	}
 	data.CreatedState = true
 	data.Name = apiUser.Name
-	data.Key = rawKey
+	data.Key = createKey(apiUser.Name, rawSecret)
 	tmpl.Execute(w, data)
 }
 

@@ -14,7 +14,7 @@ type ApiUserInput struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 	Name      string `json:"name"`
-	Key       string `json:"key"`
+	Secret    string `json:"secret"`
 	Uses      string `json:"uses"`
 	Active    string `json:"active"`
 }
@@ -24,7 +24,7 @@ type ApiUser struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Name      string    `json:"name"       validate:"gte=3,lte=30"`
-	Key       string    `json:"key"`
+	Secret    string    `json:"secret"`
 	Uses      int32     `json:"uses"`
 	Active    bool      `json:"active"`
 }
@@ -58,7 +58,7 @@ func (input ApiUserInput) Bind() (output ApiUser, err error) {
 		output.UpdatedAt = time.UnixMilli(int64(updatedAt)).UTC()
 	}
 	output.Name = input.Name
-	output.Key = input.Key
+	output.Secret = input.Secret
 	if input.Uses != "" {
 		uses, err := strconv.Atoi(input.Uses)
 		if err != nil {
@@ -77,7 +77,7 @@ func (input ApiUserInput) Bind() (output ApiUser, err error) {
 }
 
 func (a ApiUser) createQueue(batch *pgx.Batch) {
-	insertCols := "name, key"
+	insertCols := "name, secret"
 	insertVals := "$1, $2"
 	returningCols := "id, created_at, updated_at, uses, active"
 	query := fmt.Sprintf(
@@ -86,7 +86,7 @@ func (a ApiUser) createQueue(batch *pgx.Batch) {
 		insertVals,
 		returningCols,
 	)
-	batch.Queue(query, a.Name, a.Key)
+	batch.Queue(query, a.Name, a.Secret)
 }
 
 func (a *ApiUser) createResult(result pgx.BatchResults) error {
